@@ -1,5 +1,5 @@
 {
-  "name": "web3-msg-experiment",
+  "name": "@sharif-stellar-tools/web3-msg-experiment",
   "version": "1.0.0",
   "description": "Professional SDK for the Stellar Ecosystem",
   "main": "dist/index.js",
