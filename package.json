@@ -1,6 +1,10 @@
 {
   "name": "@sharif-stellar-tools/web3-msg-experiment",
   "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sharif-stellar-tools/web3-msg-experiment.git"
+  },
   "description": "Professional SDK for the Stellar Ecosystem",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
