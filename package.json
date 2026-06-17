@@ -12,8 +12,12 @@
     },
     "dependencies": {
         "@stellar/stellar-sdk": "^11.0.0",
+        "@types/express": "^5.0.6",
+        "@types/supertest": "^7.2.0",
         "axios": "^1.6.0",
         "ethers": "^6.0.0",
+        "express": "^5.2.1",
+        "supertest": "^7.2.2",
         "ws": "^8.21.0"
     },
     "devDependencies": {
