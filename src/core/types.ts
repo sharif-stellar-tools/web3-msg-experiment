@@ -4,6 +4,16 @@
 
 import { Asset } from '@stellar/stellar-sdk';
 
+/** Signed message envelope transmitted over the P2P network */
+export interface SignedMessage {
+  /** The raw string payload */
+  payload: string;
+  /** Stellar public key of the sender (G... address) */
+  senderPublicKey: string;
+  /** Hex-encoded Ed25519 signature of the payload bytes */
+  signature: string;
+}
+
 /** Supported Stellar path payment modes */
 export type PathPaymentMode = 'strict_send' | 'strict_receive';
 
