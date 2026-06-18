@@ -1,12 +1,25 @@
 import { WebSocket, WebSocketServer } from 'ws';
 import crypto from 'crypto';
+import { Keypair } from '@stellar/stellar-sdk';
+import { signMessage, verifyMessage, serializeMessage, deserializeMessage } from './core/signing';
 
 export class MessagingNode {
   private server: WebSocketServer;
   private peers: Set<WebSocket> = new Set();
   private seenHashes = new Set<string>();
 
-  constructor(private port: number, peerAddresses: string[] = []) {
+  /**
+   * @param port       Port to listen on for incoming peer connections.
+   * @param peerAddresses  WebSocket addresses of peers to connect to on startup.
+   * @param keypair    Stellar Keypair used to sign outgoing messages and authenticate
+   *                   the node. When provided, all received messages must carry a valid
+   *                   Stellar signature or they are silently dropped.
+   */
+  constructor(
+    private port: number,
+    peerAddresses: string[] = [],
+    private keypair?: Keypair,
+  ) {
     this.server = new WebSocketServer({ port });
     this.server.on('connection', (ws) => {
       this.setupPeer(ws);
@@ -40,19 +53,35 @@ export class MessagingNode {
     this.peers.add(ws);
   }
 
-  private processMessage(message: string) {
-    const hash = crypto.createHash('sha256').update(message).digest('hex');
+  private processMessage(raw: string) {
+    // When a keypair is configured, every incoming message must be a valid SignedMessage.
+    if (this.keypair) {
+      const envelope = deserializeMessage(raw);
+      if (!envelope || !verifyMessage(envelope)) {
+        // Invalid or unsigned message — drop silently
+        return;
+      }
+    }
+
+    const hash = crypto.createHash('sha256').update(raw).digest('hex');
     if (this.seenHashes.has(hash)) return;
 
     this.seenHashes.add(hash);
-    // Broadcast to others if we haven't seen it yet
-    this.broadcastInternal(message);
+    this.broadcastInternal(raw);
   }
 
+  /**
+   * Broadcast a plain string payload. When this node has a keypair the
+   * payload is wrapped in a SignedMessage envelope before sending.
+   */
   async broadcast(msg: string): Promise<boolean> {
-    const hash = crypto.createHash('sha256').update(msg).digest('hex');
+    const wire = this.keypair
+      ? serializeMessage(signMessage(msg, this.keypair))
+      : msg;
+
+    const hash = crypto.createHash('sha256').update(wire).digest('hex');
     this.seenHashes.add(hash);
-    this.broadcastInternal(msg);
+    this.broadcastInternal(wire);
     return true;
   }
 
