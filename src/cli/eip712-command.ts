@@ -6,6 +6,7 @@ import {
   recoverSigner,
   EIP712Message,
 } from '../core/eip712';
+import logger from '../logger';
 
 /**
  * CLI command for EIP-712 operations
@@ -16,7 +17,7 @@ import {
  */
 
 function printHelp(): void {
-  console.log(`
+  logger.info(`
 EIP-712 CLI Tool
 
 Usage:
@@ -52,9 +53,9 @@ function executeHash(typedDataPath: string): void {
   try {
     const typedData = loadTypedData(typedDataPath);
     const hash = hashTypedData(typedData);
-    console.log('Hash:', hash);
+    logger.info({ hash }, 'Computed hash');
   } catch (error) {
-    console.error('Error:', error instanceof Error ? error.message : String(error));
+    logger.error({ err: error }, 'Failed to compute hash');
     process.exit(1);
   }
 }
@@ -67,9 +68,9 @@ function executeVerify(
   try {
     const typedData = loadTypedData(typedDataPath);
     const isValid = verifySignature(typedData, signature, expectedSigner);
-    console.log('Signature Valid:', isValid);
+    logger.info({ valid: isValid }, 'Signature verification result');
   } catch (error) {
-    console.error('Error:', error instanceof Error ? error.message : String(error));
+    logger.error({ err: error }, 'Failed to verify signature');
     process.exit(1);
   }
 }
@@ -78,9 +79,9 @@ function executeRecover(typedDataPath: string, signature: string): void {
   try {
     const typedData = loadTypedData(typedDataPath);
     const signer = recoverSigner(typedData, signature);
-    console.log('Recovered Signer:', signer);
+    logger.info({ signer }, 'Recovered signer');
   } catch (error) {
-    console.error('Error:', error instanceof Error ? error.message : String(error));
+    logger.error({ err: error }, 'Failed to recover signer');
     process.exit(1);
   }
 }
@@ -98,7 +99,7 @@ function main(): void {
   switch (command) {
     case 'hash':
       if (args.length < 2) {
-        console.error('Error: hash command requires <typedData.json>');
+        logger.error('hash command requires <typedData.json>');
         process.exit(1);
       }
       executeHash(args[1]);
@@ -106,8 +107,8 @@ function main(): void {
 
     case 'verify':
       if (args.length < 4) {
-        console.error(
-          'Error: verify command requires <typedData.json> <signature> <expectedSigner>'
+        logger.error(
+          'verify command requires <typedData.json> <signature> <expectedSigner>'
         );
         process.exit(1);
       }
@@ -116,7 +117,7 @@ function main(): void {
 
     case 'recover':
       if (args.length < 3) {
-        console.error('Error: recover command requires <typedData.json> <signature>');
+        logger.error('recover command requires <typedData.json> <signature>');
         process.exit(1);
       }
       executeRecover(args[1], args[2]);
@@ -128,7 +129,7 @@ function main(): void {
       break;
 
     default:
-      console.error(`Unknown command: ${command}`);
+      logger.error({ command }, 'Unknown command');
       printHelp();
       process.exit(1);
   }

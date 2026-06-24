@@ -1,5 +1,16 @@
-// Complex Core Engine Simulation 
- export class CoreEngine { constructor() { console.log('Engine initialized'); } public async processTx(txId: string): Promise<boolean> { return true; } }
+import logger from '../logger';
+
+// Complex Core Engine Simulation
+export class CoreEngine {
+  constructor() {
+    logger.info('Engine initialized');
+  }
+
+  public async processTx(txId: string): Promise<boolean> {
+    logger.debug({ txId }, 'Processing transaction');
+    return true;
+  }
+}
 // Update at 2026-03-12T11:14:11
 // Update at 2026-03-18T11:14:11
 // Update at 2026-03-24T11:14:11
