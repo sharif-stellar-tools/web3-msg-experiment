@@ -2,6 +2,7 @@ import { WebSocket, WebSocketServer } from 'ws';
 import crypto from 'crypto';
 import { Keypair } from '@stellar/stellar-sdk';
 import { signMessage, verifyMessage, serializeMessage, deserializeMessage } from './core/signing';
+import logger from './logger';
 
 export class MessagingNode {
   private server: WebSocketServer;
@@ -36,7 +37,7 @@ export class MessagingNode {
       this.setupPeer(ws);
     });
     ws.on('error', (err) => {
-      console.error(`Failed to connect to ${address}: ${err.message}`);
+      logger.error({ address, err }, 'Failed to connect to peer');
     });
   }
 
