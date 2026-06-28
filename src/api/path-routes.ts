@@ -6,7 +6,7 @@
  */
 
 import { PathFinder, } from '../core/pathfinder';
-import { PathFinderConfig, PathFinderResult, PathPaymentMode } from '../core/types';
+import { PathFinderConfig, PathFinderResult, PathPaymentMode, StrategyMetadata } from '../core/types';
 
 /** Request body for the /api/paths/find endpoint */
 export interface FindPathsRequest {
@@ -18,12 +18,16 @@ export interface FindPathsRequest {
   amount: string;
   /** Path payment mode (default: "strict_send") */
   mode?: PathPaymentMode;
+  /** Optional strategy security metadata (risk score and audit link) */
+  strategyMetadata?: StrategyMetadata;
 }
 
 /** Response shape for the /api/paths/find endpoint */
 export interface FindPathsResponse {
   success: boolean;
   data?: PathFinderResult;
+  /** Risk and audit metadata for the requested strategy, if provided */
+  strategyMetadata?: StrategyMetadata;
   error?: string;
 }
 
@@ -49,7 +53,7 @@ export class PathRoutes {
    */
   handleFindPaths = async (req: { body: FindPathsRequest }): Promise<FindPathsResponse> => {
     try {
-      const { sourceAsset, destAsset, amount, mode } = req.body;
+      const { sourceAsset, destAsset, amount, mode, strategyMetadata } = req.body;
 
       // Validate required fields
       if (!sourceAsset || !destAsset || !amount) {
@@ -81,6 +85,7 @@ export class PathRoutes {
       return {
         success: !result.error || result.bestPath !== null,
         data: result,
+        strategyMetadata,
         error: result.error || undefined,
       };
     } catch (err: any) {

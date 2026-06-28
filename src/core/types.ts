@@ -97,6 +97,16 @@ export interface PathFinderResult {
   error: string | null;
 }
 
+/** Security and audit metadata for a yield strategy / protocol */
+export interface StrategyMetadata {
+  /** Protocol name */
+  name: string;
+  /** Numeric risk score from 0 (lowest risk) to 100 (highest risk) */
+  riskScore: number;
+  /** URL to the smart-contract audit report */
+  auditLink: string;
+}
+
 /** Cached orderbook data for a trading pair */
 export interface CachedOrderbook {
   /** Base asset code */
