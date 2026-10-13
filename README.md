@@ -33,6 +33,11 @@ cd web3-msg-experiment
 # (Refer to package.json or Cargo.toml for specific build commands)
 \\\
 
+## 📚 Documentation
+
+- [Protocol Specification & Security Model](./docs/PROTOCOL_SPECIFICATION.md): Comprehensive architectural breakdown, threat modeling, encryption lifecycle, and Gossipsub network invariants.
+- [EIP-712 Typed Data Documentation](./EIP712_DOCUMENTATION.md): Reference guide for typed data structured hashing, signer recovery, and cross-chain payload authentication.
+
 ## 🤝 Contributing
 We welcome contributions from the community! Please read our [Contributing Guidelines](./CONTRIBUTING.md) to get started. Before submitting a Pull Request, ensure that you have reviewed our [Code of Conduct](./CODE_OF_CONDUCT.md).
 
